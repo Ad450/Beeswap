@@ -45,6 +45,7 @@ contract Beeswap{
               sqrtPriceLimitX96: 0
         });
 
+        // uniswap exactInputSingle from swapRouter returns the maximum amount a trader could get
         _amountOut = swapRouter.exactInputSingle(_params);
 
     }
