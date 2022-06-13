@@ -59,8 +59,32 @@ contract Beeswap{
 
     }
 
-    function swapExactOutput(uint256 _amount) external lock returns (uint256 _amount){
-        
+    // exact output single swap
+    function swapExactOutput(uint256 _amountInMaximum, uint256 _amountOut) external lock returns (uint256 _amountIn){
+        TransferHelper.safeTransfer(token1, address(this), _amountInMaximum);
+        TransferHelper.safeApprove(token1, address(swapRouter), _amountInMaximum);
+
+
+        // used by uniswap exactOutput 
+        swapRouter.ExactOutputSingleParams memory _params =   swapRouter.ExactOutputSingleParams({
+              tokenIn: token0,
+                tokenOut: token1,
+                fee: poolFee,
+                recipient: msg.sender,
+                deadline: block.timestamp,
+                amountOut: _amountOut,
+                amountInMaximum: _amountInMaximum,
+                sqrtPriceLimitX96: 0
+        });
+
+        // call uniswap exactOutput to perform swapß
+       _amountIn = swapRouter.exactOutputSingle(_params);
+
+       // check if all tokens supplied were spent in trade
+       if(_amountInMaximum > _amountIn){
+           TransferHelper.safeApprove(token1, address(swapRouter), 0);
+           TransferHelper.safeTransfer(token1, msg.sender, _amountInMaximum - _amountIn);
+       }
     }
 
    
