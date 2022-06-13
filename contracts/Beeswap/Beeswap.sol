@@ -22,11 +22,20 @@ contract Beeswap{
         poolFee = _poolFee;
     }
 
+    // reentracy lock
+    bool private locked = false;
+    modifier lock(){
+        require(!locked, "contract lockde");
+        locked = true;
+        _;
+        locked = false;
+    }
+
     // Single swaps
 
     // caller approves Beeswap to withdraw _amountIn from their account
     // Beeswap approves ISwapRouter to spend _amountIn. ie. perform the swap functionality
-    function swapExactInput(uint256 _amountIn) external returns (uint256 _amountOut){
+    function swapExactInput(uint256 _amountIn) external lock returns(uint256 _amountOut){
         // Caller approves withdrawal - will be done by the wallets after calling transfer
         TransferHelper.safeTransfer(token1, address(this), _amountIn);
 
@@ -48,6 +57,10 @@ contract Beeswap{
         // uniswap exactInputSingle from swapRouter returns the maximum amount a trader could get
         _amountOut = swapRouter.exactInputSingle(_params);
 
+    }
+
+    function swapExactOutput(uint256 _amount) external lock returns (uint256 _amount){
+        
     }
 
    
