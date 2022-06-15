@@ -1,8 +1,8 @@
 //SPDX-License-Identifier: Unilicense
-pragma solidity ^0.8.4;
+pragma solidity >=0.4.0;
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
-import "@uniswap/sdk";
+
 
 contract Beeswap{
     ISwapRouter private immutable swapRouter;
@@ -12,8 +12,8 @@ contract Beeswap{
     uint24 private immutable poolFee;
 
     constructor (ISwapRouter _router, address _token1, address _token2, uint256 _minimumAmountOut, uint24 _poolFee) {
-        require(address != address(0), "invalid address");
-        require(address != address(0), "invalid address");
+        require(_token1 != address(0), "invalid address");
+        require(_token2 != address(0), "invalid address");
         
         swapRouter = _router;
         token1 = _token1;
@@ -34,18 +34,18 @@ contract Beeswap{
     // Single swaps
 
     // caller approves Beeswap to withdraw _amountIn from their account
-    // Beeswap approves ISwapRouter to spend _amountIn. ie. perform the swap functionality
+    // Beeswap approves ISwapRouter to spend _amountIn. ie. perform the swap functionality with the said _amountIn
     function swapExactInput(uint256 _amountIn) external lock returns(uint256 _amountOut){
         // Caller approves withdrawal - will be done by the wallets after calling transfer
         TransferHelper.safeTransfer(token1, address(this), _amountIn);
 
         // approve ISwapRouter to use the _amountIn for the swap
-        TransferHelper.safeApprove(token1, address(swapRouter), _amount);
+        TransferHelper.safeApprove(token1, address(swapRouter), _amountIn);
 
         // get exactInput params from uniswap
-        swapRouter.ExactInputSingleParams memory _params = swapRouter.ExactInputSingleParams({
-            tokenIn: token0,
-            tokenOut: token1,
+        ISwapRouter.ExactInputSingleParams memory _params = ISwapRouter.ExactInputSingleParams({
+            tokenIn: token1,
+            tokenOut: token2,
             fee: poolFee,
             recipient: msg.sender,
             deadline: block.timestamp,
@@ -66,9 +66,9 @@ contract Beeswap{
 
 
         // used by uniswap exactOutput 
-        swapRouter.ExactOutputSingleParams memory _params =   swapRouter.ExactOutputSingleParams({
-              tokenIn: token0,
-                tokenOut: token1,
+        ISwapRouter.ExactOutputSingleParams memory _params =  ISwapRouter.ExactOutputSingleParams({
+              tokenIn: token1,
+                tokenOut: token2,
                 fee: poolFee,
                 recipient: msg.sender,
                 deadline: block.timestamp,
@@ -80,7 +80,7 @@ contract Beeswap{
         // call uniswap exactOutput to perform swapß
        _amountIn = swapRouter.exactOutputSingle(_params);
 
-       // check if all tokens supplied were spent in trade
+       // check if all tokens supplied were spent in the trade
        if(_amountInMaximum > _amountIn){
            TransferHelper.safeApprove(token1, address(swapRouter), 0);
            TransferHelper.safeTransfer(token1, msg.sender, _amountInMaximum - _amountIn);
