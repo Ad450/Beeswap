@@ -45,7 +45,7 @@ describe("Beeswap", function () {
     expect(await testToken1.balanceOf(deployingAddress)).equals(500)
 
     // approve beeswap to spend tokens
-    testToken1.approve(beeswap.address, testAmount);
+    // testToken1.approve(beeswap.address, testAmount);
 
     await beeswap.swapExactInput(testAmount);
 

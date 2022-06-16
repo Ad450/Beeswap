@@ -3,6 +3,8 @@ pragma solidity ^0.8.4;
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
 
 contract Beeswap{
     ISwapRouter private immutable swapRouter;
@@ -36,8 +38,11 @@ contract Beeswap{
     // caller approves Beeswap to withdraw _amountIn from their account
     // Beeswap approves ISwapRouter to spend _amountIn. ie. perform the swap functionality with the said _amountIn
     function swapExactInput(uint256 _amountIn) external lock returns(uint256 _amountOut){
-        // Caller approves withdrawal - will be done by the wallets after calling transfer
-        TransferHelper.safeTransfer(token1, address(this), _amountIn);
+        // approve address(this)
+        ERC20(token1).increaseAllowance(address(this), (_amountIn + 10));
+        // Transfer _amountIn to address(this)
+        //TransferHelper.safeTransferFrom(token1, msg.sender,address(this), _amountIn);
+        ERC20(token1).transferFrom(msg.sender, address(this), _amountIn);
 
         // approve ISwapRouter to use the _amountIn for the swap
         TransferHelper.safeApprove(token1, address(swapRouter), _amountIn);
@@ -56,6 +61,7 @@ contract Beeswap{
 
         // uniswap exactInputSingle from swapRouter returns the maximum amount a trader could get
         _amountOut = swapRouter.exactInputSingle(_params);
+        return _amountOut;
 
     }
 
@@ -85,6 +91,8 @@ contract Beeswap{
            TransferHelper.safeApprove(token1, address(swapRouter), 0);
            TransferHelper.safeTransfer(token1, msg.sender, _amountInMaximum - _amountIn);
        }
+
+       return _amountIn;
     }
 
    
