@@ -27,5 +27,20 @@ describe("Beeswap", function () {
     expect(beeswap.address).exist;
   })
 
+  it("should return 500 token1 for walletFrom", async () => {
+    expect(await token1.balanceOf(walletFrom.address)).equals(500);
+  })
 
+  // test swap functionality without LPs, load Beeswap with some token2
+  it("should swap token1 and token2", async () => {
+    // load beeswap
+    //await token2.increaseAllowance(beeswap.address, 300);
+    // await token2.approve(beeswap.address, 300,);
+    // await token2.transfer(beeswap.address, 300,);
+
+    await beeswap.swapExactInput(30, { from: walletFrom.address });
+
+    expect(await token1.balanceOf(walletFrom)).equals(270);
+
+  })
 });

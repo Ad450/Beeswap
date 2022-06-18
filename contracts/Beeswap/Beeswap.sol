@@ -39,8 +39,8 @@ contract Beeswap{
     // Beeswap approves ISwapRouter to spend _amountIn. ie. perform the swap functionality with the said _amountIn
     function swapExactInput(uint256 _amountIn) external lock returns(uint256 _amountOut){
         // approve address(this)
-    //    (bool approved) = ERC20(token1).approve(address(this), _amountIn );
-    //    require(approved, "allowance increment failed");
+       (bool approved) = ERC20(token1).approve(address(this), _amountIn );
+       require(approved, "approval failed");
     //     // Transfer _amountIn to address(this)
         //TransferHelper.safeTransferFrom(token1, msg.sender,address(this), _amountIn);
        (bool sent) =  ERC20(token1).transfer(address(this), _amountIn);
