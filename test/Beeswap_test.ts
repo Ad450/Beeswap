@@ -1,22 +1,22 @@
 
 import { expect } from "chai";
-import { assert } from "console";
 import { deployContract, MockProvider } from "ethereum-waffle";
-import { Contract } from "ethers";
-import { ethers } from "hardhat";
+import { BigNumber, Contract } from "ethers";
 import BeeswapJson from "../artifacts/contracts/Beeswap/Beeswap.sol/Beeswap.json";
 import Token1Json from "../artifacts/contracts/test_token1.sol/TestToken1.json";
 import Token2Json from "../artifacts/contracts/test_token2.sol/TestToken2.json";
 
 describe("Beeswap", function () {
-  const swapRouter: string = "0xE592427A0AEce92De3Edee1F18E0157C05861564";
+  const swapRouter: string = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
   const [walletFrom, walletTo] = new MockProvider().getWallets();
+  const totalSupply: BigInt = BigInt(500 * 10 ** 18);
   let beeswap: Contract;
   let token1: Contract;
   let token2: Contract;
 
+
   beforeEach(async () => {
-    token1 = await deployContract(walletFrom, Token1Json, [500]);
+    token1 = await deployContract(walletFrom, Token1Json, [totalSupply]);
     token2 = await deployContract(walletTo, Token2Json, [500]);
     beeswap = await deployContract(walletFrom, BeeswapJson, [swapRouter, token1.address, token2.address, 0, 10]);
 
@@ -28,19 +28,20 @@ describe("Beeswap", function () {
   })
 
   it("should return 500 token1 for walletFrom", async () => {
-    expect(await token1.balanceOf(walletFrom.address)).equals(500);
+    //expect(await token1.balanceOf(walletFrom.address)).equals(500);
   })
 
   // test swap functionality without LPs, load Beeswap with some token2
   it("should swap token1 and token2", async () => {
-    // load beeswap
-    //await token2.increaseAllowance(beeswap.address, 300);
-    // await token2.approve(beeswap.address, 300,);
-    // await token2.transfer(beeswap.address, 300,);
 
-    await beeswap.swapExactInput(30, { from: walletFrom.address });
+    await token1.approve(beeswap.address, 300, { from: walletFrom.address });
 
-    expect(await token1.balanceOf(walletFrom)).equals(270);
+    const results = await beeswap.swapTokensForTokens(25, { from: walletFrom.address, gasLimit: 300000 });
+
+
+    // expect(await token1.balanceOf(beeswap.address)).equals(25);
+    // expect(await token1.allowance(beeswap.address, swapRouter)).equals(25);
+    console.log(results);
 
   })
 });
