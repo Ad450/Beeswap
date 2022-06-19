@@ -2,9 +2,9 @@
 pragma solidity ^0.8.4;
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
-
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
+import "./V2Router.sol";
 
 contract Beeswap{
     ISwapRouter private immutable swapRouter;
@@ -12,6 +12,10 @@ contract Beeswap{
     address private immutable token2;
     uint256 private immutable minimumAmountOut;
     uint24 private immutable poolFee;
+
+    // uniswap V2
+    address private constant router = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
+    
 
     constructor (ISwapRouter _router, address _token1, address _token2, uint256 _minimumAmountOut, uint24 _poolFee) {
         require(_token1 != address(0), "invalid address");
@@ -37,30 +41,24 @@ contract Beeswap{
 
     // caller approves Beeswap to withdraw _amountIn from their account
     // Beeswap approves ISwapRouter to spend _amountIn. ie. perform the swap functionality with the said _amountIn
-    function swapExactInput(uint256 _amountIn) external lock returns(uint256 _amountOut){
-        // approve address(this)
-       (bool approved) = ERC20(token1).approve(address(this), _amountIn );
-       require(approved, "approval failed");
-    //     // Transfer _amountIn to address(this)
-        //TransferHelper.safeTransferFrom(token1, msg.sender,address(this), _amountIn);
-       (bool sent) =  ERC20(token1).transfer(address(this), _amountIn);
-       require(sent, "transaction failed");
-        // approve ISwapRouter to use the _amountIn for the swap
-        TransferHelper.safeApprove(token1, address(swapRouter), _amountIn);
+    function swapExactInput(uint256 _amountIn, address _token1, address _token2) external lock returns(uint256 _amountOut){
 
-        // get exactInput params from uniswap
+        TransferHelper.safeTransferFrom(_token1, msg.sender, address(this), _amountIn);
+        
+        TransferHelper.safeApprove(_token1, address(swapRouter), _amountIn);
+        
         ISwapRouter.ExactInputSingleParams memory _params = ISwapRouter.ExactInputSingleParams({
-            tokenIn: token1,
-            tokenOut: token2,
+            tokenIn: _token1,
+            tokenOut: _token2,
             fee: poolFee,
             recipient: msg.sender,
             deadline: block.timestamp,
             amountIn: _amountIn,
             amountOutMinimum: minimumAmountOut,
-              sqrtPriceLimitX96: 0
+            sqrtPriceLimitX96: 0
         });
 
-        // uniswap exactInputSingle from swapRouter returns the maximum amount a trader could get
+       // uniswap exactInputSingle from swapRouter returns the maximum amount a trader could get
         _amountOut = swapRouter.exactInputSingle(_params);
         return _amountOut;
 
@@ -85,6 +83,7 @@ contract Beeswap{
         });
 
         // call uniswap exactOutput to perform swapß
+        // change to Iswap 
        _amountIn = swapRouter.exactOutputSingle(_params);
 
        // check if all tokens supplied were spent in the trade
@@ -96,5 +95,34 @@ contract Beeswap{
        return _amountIn;
     }
 
+
+//     function swapExactTokensForTokens(
+//   uint amountIn,
+//   uint amountOutMin,
+//   address[] calldata path,
+//   address to,
+//   uint deadline
+// ) external returns (uint[] memory amounts);
+
+   function swapTokensForTokens(uint256 _amountIn) external {
+     (bool transfered) =  ERC20(token1).transferFrom(msg.sender, address(this), _amountIn);
+     require(transfered, "transfer failed");
+    
+    (bool approved) =  ERC20(token1).approve(address(router), _amountIn);
+     require(approved, "transfer failed");
+
+    (address Weth) =  IV2Router(router).WETH();
+
+    address[] memory path = new  address[](3);
+    path[0] = token1;
+    path[1] = Weth;
+    path[2] = token2;
+
+    IV2Router(router).swapExactTokensForTokens(_amountIn, 0, path, msg.sender, block.timestamp);
+
+
+   }
    
+
+
 }
