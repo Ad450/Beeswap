@@ -4,17 +4,23 @@ import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
+//import "@uniswap/v2-periphery/contracts/UniswapV2Router02.sol";
 import "./V2Router.sol";
 
 contract Beeswap{
+    // uniswap v3 IswapRouter
     ISwapRouter private immutable swapRouter;
     address private immutable token1;
     address private immutable token2;
+    // uniswap V2
+    address private constant ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     uint256 private immutable minimumAmountOut;
     uint24 private immutable poolFee;
 
-    // uniswap V2
-    address private constant router = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
+
+    // uniswap v3 router
+    // solidity prevents reading immutable (final) before initialization
+    //address private immutable router;
     
 
     constructor (ISwapRouter _router, address _token1, address _token2, uint256 _minimumAmountOut, uint24 _poolFee) {
@@ -105,24 +111,23 @@ contract Beeswap{
 // ) external returns (uint[] memory amounts);
 
    function swapTokensForTokens(uint256 _amountIn) external {
-     (bool transfered) =  ERC20(token1).transferFrom(msg.sender, address(this), _amountIn);
-     require(transfered, "transfer failed");
-    
-    (bool approved) =  ERC20(token1).approve(address(router), _amountIn);
-     require(approved, "transfer failed");
+        TransferHelper.safeTransferFrom(token1, msg.sender, address(this), _amountIn);
+            
+        TransferHelper.safeApprove(token1, address(swapRouter), _amountIn);
 
-    (address Weth) =  IV2Router(router).WETH();
+        (address weth) =  IV2Router(ROUTER).WETH();
 
-    address[] memory path = new  address[](3);
-    path[0] = token1;
-    path[1] = Weth;
-    path[2] = token2;
+        address[] memory path = new address[](3);
+        path[0] = token1;
+        path[1] = weth;
+        path[2] = token2;
 
-    IV2Router(router).swapExactTokensForTokens(_amountIn, 0, path, msg.sender, block.timestamp);
+        //IV2Router(router).swapExactTokensForTokens(_ amountIn, 0, path, msg.sender, block.timestamp);
 
-
+        IV2Router(ROUTER).swapExactTokensForTokens(_amountIn, 1, path, msg.sender, block.timestamp);
    }
-   
 
+  
+   //1pjW5jD9uORP4UBluh0jwgI5PX3Tk6SC
 
 }
