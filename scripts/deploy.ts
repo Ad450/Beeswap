@@ -4,6 +4,7 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 import { ethers } from "hardhat";
+import hre from "hardhat"
 
 async function main() {
 
@@ -23,6 +24,18 @@ async function main() {
   const beeswap = await Beeswap.deploy(swapRouter, testToken1.address, testToken2.address, 0, 2000);
 
   console.log("Greeter deployed to:", beeswap.address);
+
+  // await hre.tenderly.persistArtifacts({
+  //   name: "Beeswap",
+  //   address: beeswap.address,
+  // })
+
+
+
+  await hre.tenderly.persistArtifacts({
+    name: "Beeswap",
+    address: beeswap.address,
+  })
 }
 
 // We recommend this pattern to be able to use async/await everywhere
