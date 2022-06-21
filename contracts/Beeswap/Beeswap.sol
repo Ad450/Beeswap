@@ -127,7 +127,5 @@ contract Beeswap{
         IV2Router(ROUTER).swapExactTokensForTokens(_amountIn, 1, path, msg.sender, block.timestamp);
    }
 
-  
-   //1pjW5jD9uORP4UBluh0jwgI5PX3Tk6SC
 
 }
