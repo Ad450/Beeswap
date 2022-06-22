@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 //import "@uniswap/v2-periphery/contracts/UniswapV2Router02.sol";
 import "./V2Router.sol";
+import "hardhat/console.sol";
 
 contract Beeswap{
     // uniswap v3 IswapRouter
@@ -32,6 +33,9 @@ contract Beeswap{
         token2 = _token2;
         minimumAmountOut = _minimumAmountOut;
         poolFee = _poolFee;
+
+        // testing
+        console.log("contract deployed successfully");
     }
 
     // reentracy lock
@@ -111,9 +115,12 @@ contract Beeswap{
 // ) external returns (uint[] memory amounts);
 
    function swapTokensForTokens(uint256 _amountIn) external {
+
         TransferHelper.safeTransferFrom(token1, msg.sender, address(this), _amountIn);
+        console.log(" token 1 balance of Beeswap is", ERC20(token1).balanceOf(address(this)));
             
         TransferHelper.safeApprove(token1, address(swapRouter), _amountIn);
+
 
         (address weth) =  IV2Router(ROUTER).WETH();
 
@@ -124,8 +131,13 @@ contract Beeswap{
 
         //IV2Router(router).swapExactTokensForTokens(_ amountIn, 0, path, msg.sender, block.timestamp);
 
-        IV2Router(ROUTER).swapExactTokensForTokens(_amountIn, 1, path, msg.sender, block.timestamp);
+        //IV2Router(ROUTER).swapExactTokensForTokens(_amountIn, 1, path, msg.sender, block.timestamp);
    }
 
+    // testing 
+    function testWeth() public returns (address weth){
+           ( weth) =  IV2Router(ROUTER).WETH();
+           return weth;
+    }
 
 }

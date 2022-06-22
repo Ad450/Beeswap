@@ -34,18 +34,23 @@ describe("Beeswap", function () {
   })
 
   // test swap functionality without LPs, load Beeswap with some token2
-  it("should swap token1 and token2", async () => {
+  // it("should swap token1 and token2", async () => {
 
-    await token1.approve(beeswap.address, 300, { from: walletFrom.address });
+  //   await token1.approve(beeswap.address, 300, { from: walletFrom.address });
 
-    const results = await beeswap.swapTokensForTokens(25, { from: walletFrom.address });
-
-
-    // expect(await token1.balanceOf(beeswap.address)).equals(25);
-    // expect(await token1.allowance(beeswap.address, swapRouter)).equals(25);
-
-    console.log(results);
+  //   const results = await beeswap.swapTokensForTokens(25, { from: walletFrom.address, gasLimit: 3000000 });
 
 
-  })
+  //   expect(await token1.balanceOf(beeswap.address)).equals(25);
+  //   expect(await token1.allowance(beeswap.address, swapRouter)).equals(25);
+
+  //   console.log(results);
+
+
+  // })
+
+  it("should return weth address", async () => {
+    console.log(await beeswap.testWeth(), { gasLimit: 3000000 });
+
+  });
 });
