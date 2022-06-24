@@ -1,8 +1,10 @@
 //SPDX-License-Identifier: Unilicense
 pragma solidity ^0.8.4;
+pragma abicoder v2;
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 
 //import "@uniswap/v2-periphery/contracts/UniswapV2Router02.sol";
 import "./V2Router.sol";
@@ -14,7 +16,7 @@ contract Beeswap{
     address private immutable token1;
     address private immutable token2;
     // uniswap V2
-    address private constant ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
+    address private constant V2ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     uint256 private immutable minimumAmountOut;
     uint24 private immutable poolFee;
 
@@ -64,13 +66,15 @@ contract Beeswap{
             recipient: msg.sender,
             deadline: block.timestamp,
             amountIn: _amountIn,
-            amountOutMinimum: minimumAmountOut,
+            amountOutMinimum: 0,
             sqrtPriceLimitX96: 0
         });
 
+        
+
        // uniswap exactInputSingle from swapRouter returns the maximum amount a trader could get
-        _amountOut = swapRouter.exactInputSingle(_params);
-        return _amountOut;
+        // _amountOut = swapRouter.exactInputSingle(_params);
+        // return _amountOut;
 
     }
 
@@ -106,37 +110,38 @@ contract Beeswap{
     }
 
 
-//     function swapExactTokensForTokens(
-//   uint amountIn,
-//   uint amountOutMin,
-//   address[] calldata path,
-//   address to,
-//   uint deadline
-// ) external returns (uint[] memory amounts);
+    //   function swapExactTokensForTokens(
+    //   uint amountIn,
+    //   uint amountOutMin,
+    //   address[] calldata path,
+    //   address to,
+    //   uint deadline
+    // ) external returns (uint[] memory amounts);
 
-   function swapTokensForTokens(uint256 _amountIn) external {
+   function swapTokensForTokens(uint256 _amountIn) external  returns (uint256[] memory amounts){
 
         TransferHelper.safeTransferFrom(token1, msg.sender, address(this), _amountIn);
-        console.log(" token 1 balance of Beeswap is", ERC20(token1).balanceOf(address(this)));
+        console.log(" token 1 balance of Beeswap is", IERC20(token1).balanceOf(address(this)));
             
         TransferHelper.safeApprove(token1, address(swapRouter), _amountIn);
 
 
-        (address weth) =  IV2Router(ROUTER).WETH();
+        //(address weth) =  IV2Router(V2ROUTER).WETH();
 
         address[] memory path = new address[](3);
         path[0] = token1;
-        path[1] = weth;
-        path[2] = token2;
+        path[1] = token2;
+       
 
         //IV2Router(router).swapExactTokensForTokens(_ amountIn, 0, path, msg.sender, block.timestamp);
 
-        //IV2Router(ROUTER).swapExactTokensForTokens(_amountIn, 1, path, msg.sender, block.timestamp);
+     ( amounts) =  IV2Router(V2ROUTER).swapExactTokensForTokens(_amountIn, 1, path, msg.sender, block.timestamp);
+     return amounts;
    }
 
     // testing 
     function testWeth() public returns (address weth){
-           ( weth) =  IV2Router(ROUTER).WETH();
+           ( weth) =  IV2Router(V2ROUTER).WETH();
            return weth;
     }
 

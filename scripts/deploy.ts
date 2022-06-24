@@ -23,7 +23,19 @@ async function main() {
   const Beeswap = await ethers.getContractFactory("Beeswap");
   const beeswap = await Beeswap.deploy(swapRouter, testToken1.address, testToken2.address, 0, 2000);
 
-  console.log("Greeter deployed to:", beeswap.address);
+  // bee
+  const Bee = await ethers.getContractFactory("Bee");
+  const bee = await Bee.deploy();
+
+  // example 
+  const Example = await ethers.getContractFactory("Bee");
+  const example = await Example.deploy();
+
+
+  console.log("beeswap deployed to:", beeswap.address);
+  console.log("Bee deployed to ", bee.address);
+  console.log(example.address);
+
 
   // await hre.tenderly.persistArtifacts({
   //   name: "Beeswap",
