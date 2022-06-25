@@ -12,7 +12,7 @@ import "hardhat/console.sol";
 
 contract Beeswap{
     // uniswap v3 IswapRouter
-    ISwapRouter private immutable swapRouter;
+    address private immutable swapRouter;
     address private immutable token1;
     address private immutable token2;
     // uniswap V2
@@ -26,7 +26,7 @@ contract Beeswap{
     //address private immutable router;
     
 
-    constructor (ISwapRouter _router, address _token1, address _token2, uint256 _minimumAmountOut, uint24 _poolFee) {
+    constructor (address _router, address _token1, address _token2, uint256 _minimumAmountOut, uint24 _poolFee) {
         require(_token1 != address(0), "invalid address");
         require(_token2 != address(0), "invalid address");
         
@@ -57,7 +57,7 @@ contract Beeswap{
 
         TransferHelper.safeTransferFrom(_token1, msg.sender, address(this), _amountIn);
         
-        TransferHelper.safeApprove(_token1, address(swapRouter), _amountIn);
+        TransferHelper.safeApprove(_token1, swapRouter, _amountIn);
         
         ISwapRouter.ExactInputSingleParams memory _params = ISwapRouter.ExactInputSingleParams({
             tokenIn: _token1,
@@ -73,7 +73,7 @@ contract Beeswap{
         
 
        // uniswap exactInputSingle from swapRouter returns the maximum amount a trader could get
-        // _amountOut = swapRouter.exactInputSingle(_params);
+        // _amountOut = ISwapRouter(swapRouter).exactInputSingle(_params);
         // return _amountOut;
 
     }
@@ -98,7 +98,7 @@ contract Beeswap{
 
         // call uniswap exactOutput to perform swapß
         // change to Iswap 
-       _amountIn = swapRouter.exactOutputSingle(_params);
+       _amountIn =ISwapRouter(swapRouter).exactOutputSingle(_params);
 
        // check if all tokens supplied were spent in the trade
        if(_amountInMaximum > _amountIn){
@@ -119,16 +119,13 @@ contract Beeswap{
     // ) external returns (uint[] memory amounts);
 
    function swapTokensForTokens(uint256 _amountIn) external  returns (uint256[] memory amounts){
-
         TransferHelper.safeTransferFrom(token1, msg.sender, address(this), _amountIn);
-        console.log(" token 1 balance of Beeswap is", IERC20(token1).balanceOf(address(this)));
-            
+        
         TransferHelper.safeApprove(token1, address(swapRouter), _amountIn);
-
 
         //(address weth) =  IV2Router(V2ROUTER).WETH();
 
-        address[] memory path = new address[](3);
+        address[] memory path = new address[](2);
         path[0] = token1;
         path[1] = token2;
        

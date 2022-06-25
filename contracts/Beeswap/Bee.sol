@@ -20,13 +20,7 @@ contract Bee {
         payable
         returns (uint256 amountOut)
     {
-        TransferHelper.safeTransferFrom(
-            LINK,
-            msg.sender,
-            address(this),
-            _amount
-        );
-
+        TransferHelper.safeTransfer(LINK, address(this), _amount);
         TransferHelper.safeApprove(LINK, ROUTER, _amount);
 
        
