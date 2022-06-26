@@ -30,7 +30,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       { version: "0.8.4" },
-      { version: "=0.6.6" }
+      { version: "0.6.6" }
     ]
   },
   defaultNetwork: "rinkeby",
