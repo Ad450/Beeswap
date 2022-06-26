@@ -58,8 +58,8 @@ contract Beeswap{
         
 
        // uniswap exactInputSingle from swapRouter returns the maximum amount a trader could get
-        _amountOut = ISwapRouter(swapRouter).exactInputSingle(_params);
-        return _amountOut;
+        // _amountOut = ISwapRouter(swapRouter).exactInputSingle(_params);
+        // return _amountOut;
 
     }
 
@@ -142,6 +142,3 @@ contract Beeswap{
     }
 
 }
-
-// owner = 0x9D7f74d0C41E726EC95884E0e97Fa6129e3b5E99
-// spender = 0x9D7f74d0C41E726EC95884E0e97Fa6129e3b5E99

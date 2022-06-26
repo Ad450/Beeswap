@@ -30,17 +30,17 @@ describe("Beeswap", function () {
     v2Example = await deployContract(walletFrom, V2ExampleJson);
   });
 
-  it("should deploy beeswap", async () => {
-    expect(beeswap.address).exist;
-  })
+  // it("should deploy beeswap", async () => {
+  //   expect(beeswap.address).exist;
+  // })
 
-  it("should return 500 token1 for walletFrom", async () => {
-    //expect(await token1.balanceOf(walletFrom.address)).equals(500);
-    console.log(beeswap.address);
+  // it("should return 500 token1 for walletFrom", async () => {
+  //   //expect(await token1.balanceOf(walletFrom.address)).equals(500);
+  //   console.log(beeswap.address);
 
-  })
+  // })
 
-  // test swap functionality without LPs, load Beeswap with some token2
+  // // test swap functionality without LPs, load Beeswap with some token2
   it("should swap token1 and token2", async () => {
 
     await token1.approve(beeswap.address, 300, { from: walletFrom.address });
@@ -54,8 +54,15 @@ describe("Beeswap", function () {
 
 
   it("v2 example ", async () => {
-    token1.approve(v2Example.address, 300, { from: walletFrom.address })
-    const results = await v2Example.swapTokensToETH(20, token1.address, { from: walletFrom.address, gasLimit: 3000000 });
+    token1.approve(v2Example.address, 200, { from: walletFrom.address });
+    const results = await v2Example.swapTokensToETH(10, token1.address, { from: walletFrom.address });
+    console.log(results);
+
+  })
+
+  // not part of contract mian test cases
+  it("should get weth address", async () => {
+    const results = await beeswap.testWeth({ from: walletFrom.address, gasLimit: 3000000 });
     console.log(results);
 
   })
