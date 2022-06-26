@@ -21,15 +21,15 @@ async function main() {
 
   // deploy beeswap contract
   const Beeswap = await ethers.getContractFactory("Beeswap");
-  const beeswap = await Beeswap.deploy(swapRouter, testToken1.address, testToken2.address, 0, 2000);
+  const beeswap = await Beeswap.deploy();
 
-  // bee
+  // bee  
   const Bee = await ethers.getContractFactory("Bee");
   const bee = await Bee.deploy();
 
   // example 
-  const Example = await ethers.getContractFactory("Bee");
-  const example = await Example.deploy();
+  const V2Example = await ethers.getContractFactory("V2Example");
+  const example = await V2Example.deploy();
 
 
   console.log("beeswap deployed to:", beeswap.address);
