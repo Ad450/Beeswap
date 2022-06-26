@@ -52,31 +52,10 @@ describe("Beeswap", function () {
 
   })
 
-  // it("testing bee", async () => {
-  //   const results = await bee.swap(50, { gasLimit: 3000000 });
-  //   console.log(results);
-
-  // })
-
-  // it("uniswap example", async () => {
-  //   const results = await example.swapExactInputSingle(10, { gasLimit: 3000000 });
-  //   console.log(results);
-
-  // });
-
-  // v2 testing
-  // it("should return v2Router address", async () => {
-
-  //   token1.approve(beeswap.address, 50, { from: walletFrom.address, gasLimit: 3000000 });
-  //   const results = await beeswap.swapTokensForTokens(50, { from: walletFrom.address, gasLimit: 3000000 })
-
-  //   console.log(results);
-
-  // });
 
   it("v2 example ", async () => {
-
-    const results = await v2Example.swapTokensToETH(20, token1, { from: walletFrom.address, gasLimit: 3000000 });
+    token1.approve(v2Example.address, 300, { from: walletFrom.address })
+    const results = await v2Example.swapTokensToETH(20, token1.address, { from: walletFrom.address, gasLimit: 3000000 });
     console.log(results);
 
   })
