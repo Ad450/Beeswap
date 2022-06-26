@@ -7,6 +7,7 @@ import Token1Json from "../artifacts/contracts/test_token1.sol/TestToken1.json";
 import Token2Json from "../artifacts/contracts/test_token2.sol/TestToken2.json";
 import BeeJson from "../artifacts/contracts/Beeswap/Bee.sol/Bee.json";
 import ExampleJson from "../artifacts/contracts/Beeswap/example.sol/SwapExamples.json";
+import V2ExampleJson from "../artifacts/contracts/Beeswap/V2_example.sol/V2Example.json";
 
 describe("Beeswap", function () {
   const v2Router: string = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
@@ -18,13 +19,15 @@ describe("Beeswap", function () {
   let token2: Contract;
   let bee: Contract;
   let example: Contract;
+  let v2Example: Contract;
 
   beforeEach(async () => {
     token1 = await deployContract(walletFrom, Token1Json, [totalSupply]);
     token2 = await deployContract(walletTo, Token2Json, [totalSupply]);
-    beeswap = await deployContract(walletFrom, BeeswapJson, [v3Router, token1.address, token2.address, 0, 5000]);
+    beeswap = await deployContract(walletFrom, BeeswapJson,);
     bee = await deployContract(walletFrom, BeeJson)
     example = await deployContract(walletFrom, ExampleJson, [v3Router]);
+    v2Example = await deployContract(walletFrom, V2ExampleJson);
   });
 
   it("should deploy beeswap", async () => {
@@ -71,4 +74,10 @@ describe("Beeswap", function () {
 
   // });
 
+  it("v2 example ", async () => {
+
+    const results = await v2Example.swapTokensToETH(20, token1, { from: walletFrom.address, gasLimit: 3000000 });
+    console.log(results);
+
+  })
 });
