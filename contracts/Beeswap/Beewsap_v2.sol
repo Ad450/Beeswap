@@ -4,13 +4,12 @@ import "@uniswap/v2-periphery/contracts/UniswapV2Router02.sol";
 
 
 contract BeeswapV2{
+    // uniswap v2 router
      address payable private router = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
 
-    function swapTokensToETH(uint256 _amount, address tokenIn)
-        external
-        payable
-        returns (uint256[] memory)
-    {
+
+
+    function swapTokensToETH(uint _amount, address tokenIn) external payable returns (uint[]256 memory) {
         bool success = IERC20(tokenIn).transfer(address(this), _amount);
         require(success, "transfer from failed");
 
@@ -22,15 +21,11 @@ contract BeeswapV2{
 
         path[0] = tokenIn;
         path[1] = weth;
-        uint256[] memory amountsOut = UniswapV2Router02(router)
-            .swapExactTokensForETH(
-                _amount,
-                0,
-                path,
-                msg.sender,
-                block.timestamp
-            );
-        return amountsOut;
+
+        uint256[] memory amountsOut = UniswapV2Router02(router).swapExactTokensForETH(_amount, 0, path, msg.sender, block.timestamp);
+
+        returns amountsOut;
+
     }
 
     function getWethAddress() public returns (address) {
