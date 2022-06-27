@@ -20,21 +20,17 @@ async function main() {
   await testToken2.deployed();
 
   // deploy beeswap contract
-  const Beeswap = await ethers.getContractFactory("Beeswap");
-  const beeswap = await Beeswap.deploy();
+  const BeeswapV3 = await ethers.getContractFactory("BeeswapV3");
+  const beeswapV3 = await BeeswapV3.deploy();
 
   // bee  
-  const Bee = await ethers.getContractFactory("Bee");
-  const bee = await Bee.deploy();
-
-  // example 
-  const V2Example = await ethers.getContractFactory("V2Example");
-  const example = await V2Example.deploy();
+  const BeeswapV2 = await ethers.getContractFactory("BeeswapV2");
+  const beeswapV2 = await BeeswapV2.deploy();
 
 
-  console.log("beeswap deployed to:", beeswap.address);
-  console.log("Bee deployed to ", bee.address);
-  console.log(example.address);
+  console.log("beeswap deployed to:", beeswapV3.address);
+  console.log("Bee deployed to ", beeswapV2.address);
+
 
 
   // await hre.tenderly.persistArtifacts({
@@ -46,7 +42,7 @@ async function main() {
 
   await hre.tenderly.persistArtifacts({
     name: "Beeswap",
-    address: beeswap.address,
+    address: beeswapV3.address,
   })
 }
 
