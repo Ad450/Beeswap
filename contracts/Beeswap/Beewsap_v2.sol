@@ -23,6 +23,7 @@ contract BeeswapV2{
     }
 
     function swapTokensForETH(uint _amount) external payable returns (uint256[] memory) {
+        require(msg.sender != address(0), "invalid caller address");
         require(_amount <= IERC20(DAI).balanceOf(msg.sender), "insufficient balance");
 
         bool success = IERC20(DAI).transfer(address(this), _amount);
@@ -33,7 +34,6 @@ contract BeeswapV2{
 
         address[] memory path = new address[](2);
         
-
         path[0] = DAI;
         path[1] = weth;
 
