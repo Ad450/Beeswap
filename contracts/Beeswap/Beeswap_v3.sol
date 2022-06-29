@@ -8,9 +8,8 @@ import "hardhat/console.sol";
 
 contract BeeswapV3{
     // uniswap v3 IswapRouter
-    address private constant swapRouter = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
+    address private constant ROUTER_V3 = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
    
-  
     // reentracy lock
     bool private locked = false;
     modifier lock(){
@@ -28,7 +27,7 @@ contract BeeswapV3{
 
         TransferHelper.safeTransferFrom(_token1, msg.sender, address(this), _amountIn);
         
-        TransferHelper.safeApprove(_token1, swapRouter, _amountIn);
+        TransferHelper.safeApprove(_token1, ROUTER_V3, _amountIn);
         
         ISwapRouter.ExactInputSingleParams memory _params = ISwapRouter.ExactInputSingleParams({
             tokenIn: _token1,
@@ -52,7 +51,7 @@ contract BeeswapV3{
     // exact output single swap
     function swapExactOutput(address token1, address token2, uint256 _amountInMaximum, uint256 _amountOut) external lock returns (uint256 _amountIn){
         TransferHelper.safeTransfer(token1, address(this), _amountInMaximum);
-        TransferHelper.safeApprove(token1, address(swapRouter), _amountInMaximum);
+        TransferHelper.safeApprove(token1, address(ROUTER_V3), _amountInMaximum);
 
 
         // used by uniswap exactOutput 
@@ -69,11 +68,11 @@ contract BeeswapV3{
 
         // call uniswap exactOutput to perform swapß
         // change to Iswap 
-       _amountIn =ISwapRouter(swapRouter).exactOutputSingle(_params);
+       _amountIn =ISwapRouter(ROUTER_V3).exactOutputSingle(_params);
 
        // check if all tokens supplied were spent in the trade
        if(_amountInMaximum > _amountIn){
-           TransferHelper.safeApprove(token1, address(swapRouter), 0);
+           TransferHelper.safeApprove(token1, ROUTER_V3, 0);
            TransferHelper.safeTransfer(token1, msg.sender, _amountInMaximum - _amountIn);
        }
 
