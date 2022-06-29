@@ -7,6 +7,7 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "@tenderly/hardhat-tenderly"
+import { hardhatArguments } from "hardhat";
 
 
 dotenv.config();
@@ -33,9 +34,8 @@ const config: HardhatUserConfig = {
       { version: "0.6.6" }
     ]
   },
-  defaultNetwork: "rinkeby",
+  defaultNetwork: "hardhat",
   networks: {
-
     rinkeby: {
       url: process.env.RINKEBY_URL || "",
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
@@ -45,6 +45,10 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
+    ganache: {
+      url: process.env.GANACHE_URL,
+      accounts: process.env.GANACHE_PRIVATE_KEY !== undefined ? [process.env.GANACHE_PRIVATE_KEY] : []
+    }
 
   },
   gasReporter: {
