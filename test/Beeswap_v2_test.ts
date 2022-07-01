@@ -10,10 +10,8 @@ import { ethers } from "hardhat";
 import { BeeswapV2 } from "../typechain";
 
 describe("Beeswap V2", function () {
-  const v2Router: string = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
-  const v3Router: string = "0xE592427A0AEce92De3Edee1F18E0157C05861564";
   // using ganache address
-  const signerAddress: string = "0x284D0f54B00c5CEd7435BCD5E4b7f0a4DE492d63";
+  const signerAddress: string = "0x0B810Ea5a89A75cEdd3ECaBC4D32c8da48b8E07d";
 
   const DAI_ADDRESS: string = "0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735";
   const [walletFrom, walletTo] = new MockProvider().getWallets();
@@ -26,13 +24,13 @@ describe("Beeswap V2", function () {
   let DAI: any;
 
   beforeEach(async () => {
+    //  get signer from address 
     const signer = await ethers.getSigner(signerAddress);
 
     token1 = await deployContract(walletFrom, Token1Json, [totalSupply]);
     token2 = await deployContract(walletTo, Token2Json, [totalSupply]);
     DAI = await ethers.getContractAt("ERC20Interface", DAI_ADDRESS, signer);
 
-    //  get signer from address 
     beeswapV2 = await deployContract(signer, BeeswapV2Json);
 
     await token1.deployed();

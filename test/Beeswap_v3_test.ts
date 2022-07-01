@@ -6,7 +6,7 @@ import BeeswapV3Json from "../artifacts/contracts/Beeswap/Beeswap_v3.sol/Beeswap
 
 describe("Beeswap V3", async () => {
     // using ganache address
-    const signerAddress: string = "0x284D0f54B00c5CEd7435BCD5E4b7f0a4DE492d63";
+    const signerAddress: string = "0x0B810Ea5a89A75cEdd3ECaBC4D32c8da48b8E07d";
     let beeswapV3: Contract;
 
 
@@ -19,6 +19,5 @@ describe("Beeswap V3", async () => {
 
     it("should deploy contract BeeswapV3", async () => {
         console.log(beeswapV3.address);
-
     });
 });
